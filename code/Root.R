@@ -12,7 +12,7 @@ source_python("MVN.py")
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", 
                "#0072B2", "#D55E00", "#CC79A7") #colourblind color palette
 #THEORETICAL ANALYSIS ----------
-source("Theory_tools.R") #tools and data
+source("Theory_tools.R") #tools for the analyses and simulations
 source("Theory_computations.R") #actual computations
 
 #DO DATA ANALYSIS -----------
