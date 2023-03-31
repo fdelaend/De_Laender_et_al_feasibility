@@ -100,53 +100,53 @@ make_A_chain <- function(s_p=1, A_CR, A_PC, ...) {
   return(A)
 }
 
-# Get diagonal matrix containing the f^-1 for a consumer-resource system on its diagonal, 
+# Get diagonal matrix containing the beta^-1 for a consumer-resource system on its diagonal, 
 # Pars are s_r=nr of resource sp; s_c=nr of consumer sp; 
-# f_i_mean =mean uniform describing effects 
+# beta_i_mean =mean uniform describing effects 
 # always a range of 50% of the mean on these uniforms
-get_Finv_CR <- function(s_r=4, s_c=2, f_c_mean=1.2, f_r_mean=0.8, ...) {
-  f_c_range <- f_c_mean/2 
-  f_r_range <- f_r_mean/2 
-  f_r       <- runif(s_r, f_r_mean-f_r_range/2, f_r_mean+f_r_range/2)
-  f_c       <- runif(s_c, f_c_mean-f_c_range/2, f_c_mean+f_c_range/2)
-  list(Finv_cr=diag(c(f_r, f_c)^-1), 
-       f_r_mean_true=mean(f_r),
-       f_c_mean_true=mean(f_c))
+get_Beta_inv_CR <- function(s_r=4, s_c=2, beta_c_mean=1.2, beta_r_mean=0.8, ...) {
+  beta_c_range <- beta_c_mean/2 
+  beta_r_range <- beta_r_mean/2 
+  beta_r       <- runif(s_r, beta_r_mean-beta_r_range/2, beta_r_mean+beta_r_range/2)
+  beta_c       <- runif(s_c, beta_c_mean-beta_c_range/2, beta_c_mean+beta_c_range/2)
+  list(Beta_inv_cr=diag(c(beta_r, beta_c)^-1), 
+       beta_r_mean_true=mean(beta_r),
+       beta_c_mean_true=mean(beta_c))
 }
-# Same as get_Finv_CR but for predators
-get_Finv_P <- function(s_p=1, f_p_mean=1.2, ...) {
-  f_p_range <- f_p_mean/2 
-  f_p       <- runif(s_p, f_p_mean-f_p_range/2, f_p_mean+f_p_range/2)
-  list(Finv_p=diag(f_p^-1, nrow=s_p, ncol=s_p), 
-       f_p_mean_true=mean(f_p))
+# Same as get_Beta_inv_CR but for predators
+get_Beta_inv_P <- function(s_p=1, beta_p_mean=1.2, ...) {
+  beta_p_range <- beta_p_mean/2 
+  beta_p       <- runif(s_p, beta_p_mean-beta_p_range/2, beta_p_mean+beta_p_range/2)
+  list(Beta_inv_p=diag(beta_p^-1, nrow=s_p, ncol=s_p), 
+       beta_p_mean_true=mean(beta_p))
 }
-#Put f^-1 together for resources, consumers, and predators
-get_Finv_RCP <- function(Finv_cr, Finv_p, ...) {
-  if(is.null(dim(Finv_p))) {Finv_p <- array(Finv_p, dim=c(1,1))}
-  zeros_topright   <- array(0, dim=c(nrow(Finv_cr), ncol(Finv_p)))
-  zeros_bottomleft <- array(0, dim=c(nrow(Finv_p), ncol(Finv_cr)))
-  return(rbind(cbind(Finv_cr, zeros_topright),
-               cbind(zeros_bottomleft, Finv_p)))
+#Put beta^-1 together for resources, consumers, and predators
+get_Beta_inv_RCP <- function(Beta_inv_cr, Beta_inv_p, ...) {
+  if(is.null(dim(Beta_inv_p))) {Beta_inv_p <- array(Beta_inv_p, dim=c(1,1))}
+  zeros_topright   <- array(0, dim=c(nrow(Beta_inv_cr), ncol(Beta_inv_p)))
+  zeros_bottomleft <- array(0, dim=c(nrow(Beta_inv_p), ncol(Beta_inv_cr)))
+  return(rbind(cbind(Beta_inv_cr, zeros_topright),
+               cbind(zeros_bottomleft, Beta_inv_p)))
 }
 
-# Get diagonal matrix containing the effects g on the consumption rates in a consumer-resource system on its diagonal, 
+# Get diagonal matrix containing the effects alpha on the consumption rates in a consumer-resource system on its diagonal, 
 # Pars are s_r=nr of resource sp; s_c=nr of consumer sp; 
-# g_mean =mean uniform describing effects 
+# alpha_mean =mean uniform describing effects 
 # always a range of 50% of the mean on these uniforms
-get_G_C <- function(s_r=4, s_c=2, g_c_mean=1.2, ...) {
-  g_c_range <- g_c_mean/2 
-  g_c       <- runif(s_c, g_c_mean-g_c_range/2, g_c_mean+g_c_range/2)
-  list(G_C=diag(c(rep(1,s_r),g_c)), g_c_mean_true = mean(g_c))
+get_Alpha_C <- function(s_r=4, s_c=2, alpha_c_mean=1.2, ...) {
+  alpha_c_range <- alpha_c_mean/2 
+  alpha_c       <- runif(s_c, alpha_c_mean-alpha_c_range/2, alpha_c_mean+alpha_c_range/2)
+  list(Alpha_C=diag(c(rep(1,s_r),alpha_c)), alpha_c_mean_true = mean(alpha_c))
 }
 
-# Get diagonal matrix containing the effects g on the consumption rates of predators on its diagonal, 
+# Get diagonal matrix containing the effects alpha on the consumption rates of predators on its diagonal, 
 # Pars are s_c=nr of consumer sp; s_p=nr of predator sp; 
-# g_p_mean =mean uniform describing effects on predator's attack rate
+# alpha_p_mean =mean uniform describing effects on predator's attack rate
 # always a range of 50% of the mean on these uniforms
-get_G_P <- function(s_c=1, s_p=1, g_p_mean=1.2, ...) {
-  g_p_range <- g_p_mean/2 
-  g_p       <- runif(s_p, g_p_mean-g_p_range/2, g_p_mean+g_p_range/2)
-  list(G_P=diag(g_p, nrow=s_p, ncol=s_p), g_p_mean_true = mean(g_p))
+get_Alpha_P <- function(s_c=1, s_p=1, alpha_p_mean=1.2, ...) {
+  alpha_p_range <- alpha_p_mean/2 
+  alpha_p       <- runif(s_p, alpha_p_mean-alpha_p_range/2, alpha_p_mean+alpha_p_range/2)
+  list(Alpha_P=diag(alpha_p, nrow=s_p, ncol=s_p), alpha_p_mean_true = mean(alpha_p))
 }
   
 #generates p intrinsic growth rate vectors, stacked underneath each other
