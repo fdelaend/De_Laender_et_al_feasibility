@@ -253,6 +253,27 @@ dXi_3CR_spatial <- Xi_3CR_spatial %>%
   drop_na(theta) %>% #remove all na and inf (not many)
   filter(!is.infinite(theta))
 
+ggplot(dXi_3CR_spatial) + 
+  theme_bw() + 
+  theme(panel.grid = element_blank()) +
+  stat_regline_equation(label.x = c(-0.3, -0.3), 
+                        label.y = c(0.15, 0.25), 
+                        aes(label = after_stat(rr.label)),
+                        show.legend=F, size=3) +
+  geom_hline(yintercept = 0, lty="dotted") + 
+  geom_vline(xintercept = 0, lty="dotted") + 
+  scale_colour_manual(values=cbPalette) + 
+  aes(x=delta, y=log10(theta), col=as_factor(a_c_mean)) + 
+  geom_point(size=0.5, shape=1, alpha=0.3) + 
+  geom_smooth(method="lm", se=F) + 
+  geom_hline(yintercept = 0, lty="dotted") + 
+  labs(x=expression(paste(delta)),
+       y=expression(paste("log(prop/",prop[epsilon=0],")")),
+       col=expression(paste(a["03"]))) +
+  coord_cartesian(ylim=c(-0.5,0.3)) + 
+  facet_grid(vary ~ ., 
+             labeller = label_bquote(paste(range["a03"], "=", .(vary))))
+
 ## Effects of dispersal on Xi, in a 3sp chain -----------------------------------------------
 Xi_3chain_spatial <- expand_grid(s_r=1, s_c=1, s_p=1, a_c_mean=round(seq(0.5, 10, 0.5),1), 
                                  a_p_mean=c(0.72, 10), d_max=c(1e-4, 1e-3), p=100, 
