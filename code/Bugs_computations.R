@@ -64,17 +64,18 @@ used_vs_available_range <- used_range %>%
                                    low = "reference", high = "altered")) %>%
   mutate(community_nr = match(used_range$community, unique(used_range$community))) %>% #give a nr to ID the communities
   mutate(type_of_parameter = ifelse(parameter%in%c("NH4-N", "NO3-N", "silica"), "nutrients", "others")) 
-## used vs. available ranges (everything is below id line, av. range almost never entirely used)--------
+## used vs. available ranges (indicating that available range is almost never entirely used)--------
 ggplot(used_vs_available_range) + 
   theme_bw() + 
   theme(panel.grid = element_blank()) +
   scale_colour_manual(values=c(cbPalette)) + 
-  geom_boxplot(aes(x=parameter, y=log10(available)-log10(used), col=period)) +
+  aes(x=log10(available), y=log10(used), 
+      col=parameter, pch=period)+
+  geom_point() +
   facet_grid(cols=vars(stress), scales="free") + 
-  geom_hline(yintercept = 0, lty="dashed") + 
-  labs(x="chemistry variable",
-       y=expression(paste(log[10],"(",range[available],"/",range[used],")"))) +
-  theme(axis.text.x = element_text(angle = 90))
+  geom_abline(intercept = 0, slope = 1, lty="dashed") + 
+  labs(x=expression(paste(log[10],"(",range[available],")")),
+       y=expression(paste(log[10],"(",range[used],")"))) 
 
 ## used ranges in high vs low stress ------------
 used_vs_available_range_main_plot <- used_vs_available_range %>%
@@ -83,15 +84,18 @@ used_vs_available_range_main_plot <- used_vs_available_range %>%
   mutate(reference_altered = log10(used_reference) - log10(used_altered))
 
 ggplot(used_vs_available_range_main_plot) + 
+  aes(x=log10(used_reference), y=log10(used_altered), 
+      col=parameter, pch=period)+
   theme_bw() + 
   theme(panel.grid = element_blank()) +
   scale_colour_manual(values=cbPalette) + 
-  geom_boxplot(aes(x=parameter, y=reference_altered, col=period)) +
-  #facet_wrap(vars(period), ncol=4, scales="free") + 
-  labs(x="chemistry variable",
-     y=expression(paste(log[10],"(",range[reference],"/",range[altered],"), used"))) + 
-  theme(axis.text.x = element_text(angle = 90)) + 
-  geom_hline(yintercept = 0, lty="dashed")
+  geom_point() +
+  facet_wrap(vars(type_of_parameter), ncol=2, scales="free") + 
+  theme(strip.text.x = element_text(size = 15)) +
+  labs(x=expression(paste(log[10],"(",range[reference],")")),
+       y=expression(paste(log[10],"(",range[altered],")"))) + 
+  geom_abline(intercept=0, slope=1, lty="dashed") +
+  guides(col = guide_legend(ncol = 2))
 
 lm(reference_altered ~ period + parameter , 
             data = used_vs_available_range_main_plot %>%
