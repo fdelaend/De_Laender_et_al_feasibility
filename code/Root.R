@@ -3,7 +3,7 @@ library(tidyverse)
 library(corrr)
 library(deSolve)
 library(mvtnorm)
-#library(igraph)
+library(igraph)
 library(ggpubr)
 library(reticulate) #to run python code from R
 #devtools::install_github("clsong/feasoverlap")
