@@ -3,7 +3,7 @@ library(tidyverse)
 library(corrr)
 library(deSolve)
 library(mvtnorm)
-library(igraph)
+#library(igraph)
 library(ggpubr)
 library(reticulate) #to run python code from R
 #devtools::install_github("clsong/feasoverlap")
@@ -14,8 +14,8 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
                "#0072B2", "#D55E00", "#CC79A7") #colourblind color palette
 #THEORETICAL ANALYSIS ----------
 source("Theory_tools.R") #tools for the analyses and simulations
-source("Theory_computations.R") #actual computations
+#Now run the code in "Theory_computations.R"
 
-#DO DATA ANALYSIS -----------
+#DATA ANALYSIS -----------
 source("Bugs_tools.R") #tools and data
-source("Bugs_computations.R") #actual analysis
+#Now run the code in "Bugs_computations.R"
