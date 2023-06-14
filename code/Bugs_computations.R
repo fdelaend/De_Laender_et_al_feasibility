@@ -39,9 +39,14 @@ joined_data_selection <- joined_data %>%
   mutate(community = pmap(., transform_to_taxonomic, cutoff = cutoff_frac)) %>%#When a taxon has less than 5% rel. freq. we put it to zero
   unnest_wider(community) %>%
   filter(community_size>1, period != "1995 - 2000") %>%#delete cases where comm size is only 1 genus because very sad
+  mutate(n = map(n, ~.x *(.x>0)/ifelse(.x>0, .x, 1))) 
+
+joined_data_selection <- readRDS("joined_data_selection.rds") %>%#  joined_data_selection %>%
   select(-n) #ditch raw abundances
 
 # COMPUTE AVAILABLE AND USED RANGE ---------------
+chemistry_to_keep <- c("chem_ph", "chem_cond", "chem_turb", "chem_doc",
+                       "chem_calcium", "chem_ammonia_n", "chem_nitrate_n", "chem_silica")
 available_range <- compute_range_per_combo(data=joined_data_selection, 
                                            combo_vars=c("period", "stress"),
                                            range_vars = chemistry_to_keep,
